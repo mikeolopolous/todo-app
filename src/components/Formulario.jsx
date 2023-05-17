@@ -1,12 +1,13 @@
 import { useState } from "react"
+import Swal from 'sweetalert2'
 
-export const Formulario = () => {
+export const Formulario = ({ addTodo }) => {
 
     const [todo, setTodo] = useState({
         title: '',
         description: '',
         state: '',
-        priority: true
+        priority: false
     })
     const [error, setError] = useState('')
 
@@ -25,7 +26,28 @@ export const Formulario = () => {
         e.preventDefault()
         setError('')
 
-        if (!title.trim() || !description.trim()) return setError('Llena todos los campos')
+        if (!title.trim() || !description.trim()) {
+            return Swal.fire({
+                title: 'Campos obligatorios',
+                html: 'Por favor llena todos los campos',
+                icon: 'error',
+                confirmButtonColor: '#0d6efd'
+            })
+        }
+
+        addTodo({
+            id: Date.now(),
+            ...todo,
+            state: state === 'completado'
+        })
+
+        Swal.fire({
+            title: "Todo agregado correctamente",
+            position: 'center',
+            icon: 'success',
+            showConfirmButton: false,
+            timer: 1500
+        })
 
     }
 
@@ -70,7 +92,7 @@ export const Formulario = () => {
                 type="submit"
                 className="btn btn-primary"
             >
-                Guardar
+                Agregar
             </button>
             {
                 error !== '' && error
